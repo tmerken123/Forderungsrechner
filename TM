@@ -1,0 +1,2 @@
+https://github.com/tmerken123/Forderungsrechner.git
+git@github.com:tmerken123/Forderungsrechner.git
