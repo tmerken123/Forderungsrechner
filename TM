@@ -1,2 +1,61 @@
-https://github.com/tmerken123/Forderungsrechner.git
-git@github.com:tmerken123/Forderungsrechner.git
+
+document.addEventListener("DOMContentLoaded", function () {
+  const root = document.getElementById("root");
+
+  function renderApp(betrag) {
+    const nettoBetrag = betrag / 1.19;
+    const ust = betrag - nettoBetrag;
+
+    const aufteilung = {
+      geschaeftskonto: {
+        betriebsaufwand: nettoBetrag * 0.5,
+        steuern: nettoBetrag * 0.2,
+        gewinn: nettoBetrag * 0.1,
+        investition: nettoBetrag * 0.1,
+      },
+      tagesgeldkonto: {
+        ruecklage: nettoBetrag * 0.05,
+        notpuffer: nettoBetrag * 0.05,
+      },
+    };
+
+    return `
+      <div style='font-family: Arial, sans-serif; background-color: #f9fafb; min-height: 100vh; padding: 2rem;'>
+        <div style='max-width: 500px; margin: auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'>
+          <h1 style='font-size: 1.8rem; margin-bottom: 1rem; color: #1f2937;'>📊 Forderungsrechner</h1>
+          <label style='display: block; margin-bottom: 0.5rem; color: #374151;'>Rechnungsbetrag (Brutto in €)</label>
+          <input id='betragInput' type='number' placeholder='z. B. 11900' value='${betrag || ''}'
+            style='width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #d1d5db; margin-bottom: 1.5rem; font-size: 1rem;' />
+          <div style='background: #f3f4f6; padding: 1rem; border-radius: 8px; color: #111827;'>
+            <p><strong>🧾 Umsatzsteuer (19 %):</strong> ${ust.toFixed(2)} €</p>
+            <p><strong>📉 Netto-Betrag:</strong> ${nettoBetrag.toFixed(2)} €</p>
+            <h2 style='margin-top: 1rem; font-size: 1.2rem;'>📘 Aufteilung Geschäftskonto</h2>
+            <ul style='padding-left: 1rem;'>
+              <li>🔧 Betriebskosten (50 %): ${aufteilung.geschaeftskonto.betriebsaufwand.toFixed(2)} €</li>
+              <li>📑 Steuerrücklage (20 %): ${aufteilung.geschaeftskonto.steuern.toFixed(2)} €</li>
+              <li>💼 Unternehmergewinn (10 %): ${aufteilung.geschaeftskonto.gewinn.toFixed(2)} €</li>
+              <li>🛠️ Investitionen (10 %): ${aufteilung.geschaeftskonto.investition.toFixed(2)} €</li>
+            </ul>
+            <h2 style='margin-top: 1rem; font-size: 1.2rem;'>💰 Aufteilung Tagesgeldkonto</h2>
+            <ul style='padding-left: 1rem;'>
+              <li>💶 Rücklage (5 %): ${aufteilung.tagesgeldkonto.ruecklage.toFixed(2)} €</li>
+              <li>🚨 Notfallpuffer (5 %): ${aufteilung.tagesgeldkonto.notpuffer.toFixed(2)} €</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function init() {
+    let betrag = 0;
+    root.innerHTML = renderApp(betrag);
+    document.getElementById('betragInput').addEventListener('input', (e) => {
+      betrag = parseFloat(e.target.value) || 0;
+      root.innerHTML = renderApp(betrag);
+      init(); // Re-bind input
+    });
+  }
+
+  init();
+});
